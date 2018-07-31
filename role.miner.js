@@ -21,13 +21,21 @@ var roleMiner = {
 	    }
         
 	    if(creep.memory.mining ) {
-	        creep.getEnergy(0, true, false);
+	        if(creep.memory.source) {
+    	        let source = Game.getObjectById(creep.memory.source);
+                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
+                }
+	        } else {
+        	    creep.getEnergy(0, true, false);
+	        }
         } else {
-            var container = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            var containers = creep.pos.findInRange(FIND_STRUCTURES,4, {
                     filter: (structure) => structure.structureType == STRUCTURE_CONTAINER &&
                                             structure.store.energy < structure.storeCapacity
             });
-            if(container) {
+            if(containers.length) {
+                let container = containers[0];
                 if(creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
                 }

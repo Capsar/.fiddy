@@ -11,9 +11,6 @@ var roleLorry = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        let pickupPoints = _filter(Game.flags, (flag) => flag.name.startsWith('PickupPoint'));
-        
-        
         if(creep.memory.delivering && creep.carry.energy == 0) {
             creep.memory.delivering = false;
             creep.say('🔄 pickup');
@@ -24,19 +21,15 @@ var roleLorry = {
 	    }
         
 	    if(!creep.memory.delivering) {
-	        let target = Game.flags[creep.memory.pickupPoint].;
-	        if(target.room !== creep.room) {
-	            creep.moveTo(target);
-	        } else
-	            creep.getEnergy(1, false, true);
+	            creep.getEnergy(0, false, true);
         } else {
             let homeFlag = Game.flags['Home'].name;
-            if(homeFlag.room !== creep.room) {
-                creep.moveTo(homeFlag{visualizePathStyle: {stroke: '#00ff00'}});
+            if(homeFlag != undefined && homeFlag.room !== creep.room) {
+                creep.moveTo(homeFlag , {visualizePathStyle: {stroke: '#00ff00'}});
             } else {
                 let targets = creep.room.find(FIND_STRUCTURES, {
                         filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_CONTAINER && structure.energy < structure.energyCapacity;
+                            return (structure.structureType == STRUCTURE_STORAGE && structure.energy < structure.energyCapacity);
                         }
                 });
                 if(targets.length > 0) {

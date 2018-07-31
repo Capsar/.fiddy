@@ -28,9 +28,10 @@ var roleRepairer = {
             let damaged = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) =>
                     (structure.structureType == STRUCTURE_WALL && structure.hits < 101010) ||
-                    (structure.structureType == STRUCTURE_ROAD && structure.hits < 2000) ||
-                    (structure.structureType == STRUCTURE_CONTAINER && structure.hits < 10000) ||
-                    (structure.structureType == STRUCTURE_RAMPART && structure.hits < 50000)
+                    (structure.structureType == STRUCTURE_ROAD && structure.hits < 4000) ||
+                    (structure.structureType == STRUCTURE_CONTAINER && structure.hits < 50000) ||
+                    (structure.structureType == STRUCTURE_RAMPART && structure.hits < 50000) ||
+                    (structure.structureType == STRUCTURE_STORAGE && structure.hits < 50000)
             });
             if(damaged) {
     	        if(creep.repair(damaged) == ERR_NOT_IN_RANGE) {

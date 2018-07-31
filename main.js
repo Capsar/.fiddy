@@ -4,6 +4,7 @@ const roleHarvester = require('role.harvester');
 const roleMiner = require('role.miner');
 const roleRepairer = require('role.repairer');
 const roleUpgrader = require('role.upgrader');
+const roleLorry = require('role.lorry');
 require('prototype.creep')();
 require('prototype.tower')();
 require('prototype.spawn')();
@@ -30,8 +31,9 @@ module.exports.loop = function () {
 
     var fighters = _.filter(Game.creeps, (creep) => creep.memory.role == 'fighter');
     
+    var lorries = _.filter(Game.creeps, (creep) => creep.memory.role == 'lorry');
 
-    var total = builders.length+harvesters.length+upgraders.length+repairers.length + miners.length + fighters.length;
+    var total = builders.length+harvesters.length+upgraders.length+repairers.length+miners.length+fighters.length+lorries.length;
     
     let num = Memory.numberOfCreeps;
     
@@ -44,7 +46,14 @@ module.exports.loop = function () {
         let spawn = Game.spawns[name];
         let roomEnergy = spawn.room.energyAvailable;
         let roomEnergyCap = spawn.room.energyCapacityAvailable;
-        let closestHostile = spawn.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        let hostiles = spawn.room.find(FIND_HOSTILE_CREEPS);
+        let fightable = false;
+        if(hostiles) {
+            fightable = spawn.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
+        }
+        let storages = spawn.room.find(FIND_STRUCTURES, {
+            filter: (structure) => (structure.structureType == STRUCTURE_STORAGE)
+        });
 
 
         if(Game.time % 10 == 0) {
@@ -81,16 +90,32 @@ module.exports.loop = function () {
         if(miners.length < 2 && !spawn.spawning && roomEnergy >= 600) {
             let newName = 'Miner' + Game.time;
             console.log('Spawning new miner: ' + newName);
+            assignSource = function () {
+                let sources = spawn.room.find(FIND_SOURCES);
+                if (_.filter(Game.creeps, (creep) => creep.memory.source == sources[0].id).length == 0) {
+                    return sources[0].id;
+                } else if (_.filter(Game.creeps, (creep) => creep.memory.source == sources[1].id).length == 0) {
+                    return sources[1].id;
+                }
+            };
+            let assignedSource = assignSource();
             spawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,MOVE], newName, 
-                {memory: {role: 'miner'}});
+                {memory: {role: 'miner', source: assignedSource}});
         } else
-        if(fighters.length < 2 && (closestHostile || Game.flags['attack']) && !spawn.spawning && roomEnergy >= 800) {
+        if(fighters.length < 2 && (fightable || Game.flags['attack']) && !spawn.spawning && roomEnergy >= 800) {
             let newName = 'Helper' + Game.time;
             console.log('Spawning new Helper: ' + newName);
             spawn.spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,
             MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,ATTACK,MOVE,MOVE], newName, 
                 {memory: {role: 'fighter'}});
-        }
+        } 
+        // else
+        // if(lorries.length < 2 && storages.length && !spawn.spawning && roomEnergy >= 800) {
+        //     let newName = 'Lorry' + Game.time;
+        //     console.log('Spawning new Lorry: ' + newName);
+        //     spawn.spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+        //         {memory: {role: 'lorry'}});
+        // }
     
     
         
@@ -132,6 +157,9 @@ module.exports.loop = function () {
                 break;
             case 'fighter':
                 roleFighter.run(creep);
+                break;
+            case 'lorry':
+                roleLorry.run(creep);
                 break;
         }
     }
