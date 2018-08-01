@@ -15,7 +15,7 @@ var roleBuilder = {
 	    }
 
         if(!creep.memory.building) {
-            creep.getEnergy(0, true, true);
+            creep.getEnergy(0, false, true, true);
         } else {
             
 	        let target = creep.pos.findClosestByPath(FIND_MY_CONSTRUCTION_SITES);

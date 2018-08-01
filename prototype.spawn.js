@@ -8,5 +8,7 @@
  */
 
 module.exports = function () {
-
+    StructureSpawn.prototype.spawnBuilder = function() {
+        
+    };
 };

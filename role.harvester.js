@@ -23,7 +23,7 @@ var roleHarvester = {
 	    }
         
 	    if(!creep.memory.delivering) {
-	        creep.getEnergy(0, true, true);
+	        creep.getEnergy(0, true, true, true);
         } else {
             let homeFlag = Game.flags['Home'];
             if(homeFlag != undefined && homeFlag.room !== creep.room) {

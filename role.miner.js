@@ -20,17 +20,24 @@ var roleMiner = {
 	        creep.say('store');
 	    }
         
-	    if(creep.memory.mining ) {
+	    if(creep.memory.mining) {
+	        let droppedResource = creep.pos.lookFor(LOOK_RESOURCES);
+            let containers = creep.pos.findInRange(FIND_STRUCTURES,1, {
+                    filter: (structure) => structure.structureType == STRUCTURE_CONTAINER &&
+                                            structure.store.energy < structure.storeCapacity
+            });
+	        if(containers.length && droppedResource) {
+	            creep.pickup(droppedResource[0]);
+	        }
 	        if(creep.memory.source) {
     	        let source = Game.getObjectById(creep.memory.source);
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(source);
                 }
-	        } else {
-        	    creep.getEnergy(0, true, false);
 	        }
+
         } else {
-            var containers = creep.pos.findInRange(FIND_STRUCTURES,4, {
+            let containers = creep.pos.findInRange(FIND_STRUCTURES,1, {
                     filter: (structure) => structure.structureType == STRUCTURE_CONTAINER &&
                                             structure.store.energy < structure.storeCapacity
             });

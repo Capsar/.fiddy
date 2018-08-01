@@ -19,11 +19,11 @@ var roleRepairer = {
     	}
     	if(!creep.memory.repairing && creep.carry.energy == creep.carryCapacity) {
     	    creep.memory.repairing = true;
-    	    creep.say('🚧 repairr');
+    	    creep.say('🚧 repair');
     	}
     	
     	if(!creep.memory.repairing) {
-    	    creep.getEnergy(0, false, true);
+    	    creep.getEnergy(0, false, true, true);
     	} else {
             let damaged = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) =>
@@ -31,7 +31,7 @@ var roleRepairer = {
                     (structure.structureType == STRUCTURE_ROAD && structure.hits < 4000) ||
                     (structure.structureType == STRUCTURE_CONTAINER && structure.hits < 50000) ||
                     (structure.structureType == STRUCTURE_RAMPART && structure.hits < 50000) ||
-                    (structure.structureType == STRUCTURE_STORAGE && structure.hits < 50000)
+                    (structure.structureType == STRUCTURE_STORAGE && structure.hits < 10000)
             });
             if(damaged) {
     	        if(creep.repair(damaged) == ERR_NOT_IN_RANGE) {
